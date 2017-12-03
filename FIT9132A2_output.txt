@@ -1,0 +1,403 @@
+SQL> set echo on
+SQL> -- Assignment 2
+SQL> -- Student Name: Jayesh Parab 
+SQL> -- Student ID: 27148572
+SQL> -- Write your SQL statement below each question.
+SQL> /* Q1. How many animals have been born in the wild belongs to the EQUIDAE
+family. Name the output column "Number of animals" */
+SQL> Select 
+  count(a.animal_id) as "Number of Animals"
+from 
+  as2.animal a, 
+  as2.species s
+where 
+  s.spec_genus = a.spec_genus
+  and 
+  s.spec_name = a.spec_name
+  and 
+  s.spec_family = 'EQUIDAE'
+  and 
+  brevent_id is null;
+
+                      Number of Animals
+---------------------------------------
+                                      3
+
+SQL> /* Q2. In a single list show all animals indicating if the animal has been
+exchanged or not -
+the list should show animal id, centre name, popular name, and an exchange
+status message.
+The list should be in animal id order within popular name order.
+Your output should have the general form (sample rows only shown): */
+SQL> Select 
+  distinct(a.animal_id) as "Animal ID", 
+  c.centre_name as "Centre Name", 
+  s.spec_popular_name as "Popular Name", 
+  nvl2(e.exchange_no, 'This animal has been Exchanged', 'This animal has NOT been Exchanged') as "Exchange Status"
+from 
+  animal a, 
+  centre c, 
+  species s, 
+  exchange e
+where 
+  a.centre_id = c.centre_id
+  and 
+  a.spec_genus = s.spec_genus
+  and 
+  a.spec_name = s.spec_name
+  and 
+  a.animal_id = e.animal_id (+)
+order by 
+  s.spec_popular_name, 
+  a.animal_id;
+
+ Animal ID Centre Name
+---------- ----------------------------------------
+Popular Name                             Exchange Status                  
+---------------------------------------- ----------------------------------
+         4 Australia Zoo                            
+Black Rhinoceros                         This animal has been Exchanged    
+
+        10 Alice Springs Desert Park                
+Black Rhinoceros                         This animal has NOT been Exchanged
+
+        11 Alice Springs Desert Park                
+Black Rhinoceros                         This animal has NOT been Exchanged
+
+
+ Animal ID Centre Name
+---------- ----------------------------------------
+Popular Name                             Exchange Status                  
+---------------------------------------- ----------------------------------
+        12 Alice Springs Desert Park                
+Black Rhinoceros                         This animal has NOT been Exchanged
+
+         6 Werribee Open Range Zoo                  
+Cheetah                                  This animal has been Exchanged    
+
+        13 Alice Springs Desert Park                
+Cheetah                                  This animal has NOT been Exchanged
+
+
+ Animal ID Centre Name
+---------- ----------------------------------------
+Popular Name                             Exchange Status                  
+---------------------------------------- ----------------------------------
+        14 Alice Springs Desert Park                
+Cheetah                                  This animal has NOT been Exchanged
+
+        15 Alice Springs Desert Park                
+Cheetah                                  This animal has NOT been Exchanged
+
+         7 Werribee Open Range Zoo                  
+Common Hippopotamus                      This animal has been Exchanged    
+
+
+ Animal ID Centre Name
+---------- ----------------------------------------
+Popular Name                             Exchange Status                  
+---------------------------------------- ----------------------------------
+        20 Kruger National Park                     
+Common Hippopotamus                      This animal has NOT been Exchanged
+
+        26 SanWild Wildlife Sanctuary               
+Common Hippopotamus                      This animal has been Exchanged    
+
+        27 SanWild Wildlife Sanctuary               
+Common Hippopotamus                      This animal has NOT been Exchanged
+
+
+ Animal ID Centre Name
+---------- ----------------------------------------
+Popular Name                             Exchange Status                  
+---------------------------------------- ----------------------------------
+        23 Johannesburg Zoo                         
+Greater Bilby                            This animal has NOT been Exchanged
+
+        25 Johannesburg Zoo                         
+Grevy's Zebra                            This animal has been Exchanged    
+
+        29 SanWild Wildlife Sanctuary               
+Grevy's Zebra                            This animal has NOT been Exchanged
+
+
+ Animal ID Centre Name
+---------- ----------------------------------------
+Popular Name                             Exchange Status                  
+---------------------------------------- ----------------------------------
+        30 SanWild Wildlife Sanctuary               
+Grevy's Zebra                            This animal has NOT been Exchanged
+
+         9 Werribee Open Range Zoo                  
+Lion                                     This animal has been Exchanged    
+
+        16 Kruger National Park                     
+Lion                                     This animal has NOT been Exchanged
+
+
+ Animal ID Centre Name
+---------- ----------------------------------------
+Popular Name                             Exchange Status                  
+---------------------------------------- ----------------------------------
+        17 Kruger National Park                     
+Lion                                     This animal has NOT been Exchanged
+
+        18 Kruger National Park                     
+Lion                                     This animal has NOT been Exchanged
+
+        19 Kruger National Park                     
+Lion                                     This animal has NOT been Exchanged
+
+
+ Animal ID Centre Name
+---------- ----------------------------------------
+Popular Name                             Exchange Status                  
+---------------------------------------- ----------------------------------
+        28 SanWild Wildlife Sanctuary               
+Lion                                     This animal has NOT been Exchanged
+
+         8 Werribee Open Range Zoo                  
+Mountain Zebra                           This animal has been Exchanged    
+
+        24 Johannesburg Zoo                         
+Northern Hairy-nosed Wombat              This animal has NOT been Exchanged
+
+
+ Animal ID Centre Name
+---------- ----------------------------------------
+Popular Name                             Exchange Status                  
+---------------------------------------- ----------------------------------
+        21 Johannesburg Zoo                         
+Numbat                                   This animal has NOT been Exchanged
+
+         1 Australia Zoo                            
+Quokka                                   This animal has NOT been Exchanged
+
+         2 Australia Zoo                            
+Quokka                                   This animal has been Exchanged    
+
+
+ Animal ID Centre Name
+---------- ----------------------------------------
+Popular Name                             Exchange Status                  
+---------------------------------------- ----------------------------------
+         3 Australia Zoo                            
+Quokka                                   This animal has NOT been Exchanged
+
+         5 Australia Zoo                            
+Quokka                                   This animal has NOT been Exchanged
+
+        22 Johannesburg Zoo                         
+Tasmanian Devil                          This animal has been Exchanged    
+
+
+ 30 rows selected 
+
+SQL> /* Q3. List the animal id, genus, species, sex and number of exchanges for
+those animals which have been involved in more than the average number of exchanges per animal
+(for those animals which have been exchanged).
+The animal sex should be displayed as 'Male" or 'Female'.
+Your output should have the general form (sample row only shown) */
+SQL> select 
+  a.animal_id as "Animal ID", 
+  a.spec_genus as "Genus", 
+  a.spec_name as "Species", 
+  decode(animal_sex, 'M', 'Male', 'F', 'Female') as "Sex", 
+  count(e.animal_id) as "Number of Exchanges"
+from 
+  as2.animal a, 
+  as2.exchange e
+where 
+  a.animal_id = e.animal_id
+group by 
+  a.animal_id, 
+  a.spec_genus, 
+  a.spec_name, 
+  a.animal_sex
+having 
+  count(e.animal_id) > 
+  (
+  select 
+    avg(count(animal_id))
+  from 
+    as2.exchange 
+  group by 
+    animal_id);
+
+ Animal ID Genus                Species              Sex
+---------- -------------------- -------------------- ------
+                    Number of Exchanges
+---------------------------------------
+        25 Equus                grevyi               Male   
+                                      2
+
+
+SQL> /* Q4 Which is the most popular centre for exchange to or from?
+Your output should list the centre name and the number of times the centre is
+used for an exchange from or an exchange to. The exchange from and the exchange to 
+will be calculated as a single figure. For example, if a centre is involved in an exchange
+as a recipient (exchange to) and in another exchange as a provider (exchange_from) then 
+this centre will be counted to have 2 exchange events.
+The list should be display in the order of the centre name.
+Your output should have the general form (sample rows only shown): */
+SQL> Select 
+  c.centre_name as "Centre Name", 
+  count(e.exchange_from_centre_id) as "Number of exchanges (To/From)"
+from 
+  as2.centre c, 
+  as2.exchange e
+where 
+  c.centre_id = e.exchange_from_centre_id
+  or 
+  c.centre_id = e.exchange_to_centre_id
+group by 
+  c.centre_name
+having 
+  count(e.exchange_from_centre_id) = 
+  (
+  Select 
+    max(count(e.exchange_from_centre_id))
+  from 
+    as2.centre c, 
+    as2.exchange e
+  where 
+    c.centre_id = e.exchange_from_centre_id
+    or 
+    c.centre_id = e.exchange_to_centre_id
+  group by 
+    c.centre_name);
+
+Centre Name                                        Number of exchanges (To/From)
+---------------------------------------- ---------------------------------------
+Werribee Open Range Zoo                                                        6
+
+SQL> /* Q5 List the genus name and the ratio of the animal born in the wild to the
+total animal of the genus. Write the ratio as a percentage, round it to one decimal point. Order the list according to the genus name.*/
+SQL> select 
+  spec_genus as "SPEC_GENUS", 
+  to_char(round(((count(animal_id)/
+    (
+    select 
+      count(animal_id) 
+    from 
+      as2.animal a 
+    where 
+      a.spec_genus = a1.spec_genus
+    group by spec_genus
+    )) * 100),1),990.9) as Percentage
+from 
+  as2.animal a1
+where 
+  brevent_id is null
+group by 
+  spec_genus
+order by
+  spec_genus;
+
+SPEC_GENUS           PERCEN
+-------------------- ------
+Acinonyx               75.0
+Diceros                50.0
+Equus                  75.0
+Hippopotamus           50.0
+Lasiorhinus           100.0
+Macrotis              100.0
+Myrmecobius           100.0
+Panthera               50.0
+Sarcophilus           100.0
+Setonix                75.0
+
+ 10 rows selected 
+
+SQL> /* Q6 List all centres that do not receive any grant. 
+Order the list according to the centre name */
+SQL> Select 
+  centre_id as "Centre Id", 
+  centre_name as "Centre Name"
+from 
+  as2.centre c
+where 
+  centre_id not in 
+  (
+  select 
+    distinct centre_id 
+  from 
+    as2.grants)
+order by 
+  centre_name;
+
+Centre Centre Name                            
+------ ----------------------------------------
+AUS40  Taronga Zoo                             
+AUS20  Werribee Open Range Zoo                 
+
+SQL> /* Q7 List all offsprings that have been born as a result of the breeding
+program.
+In the list you will list the animal id of the offspring, the animal id of the
+mother, the animal id of the father and the popular name of the animal.
+Order the list according to the popular name. */
+SQL> Select 
+  a.animal_id as "Animal ID", 
+  b.brevent_mother_id as "Mother ID", 
+  b.brevent_father_id as "Father ID", 
+  s.spec_popular_name as "Popular Name" 
+from 
+  as2.animal a, 
+  as2.breeding_event b, 
+  as2.species s
+where 
+  a.brevent_id = b.brevent_id
+  and 
+  s.spec_genus = a.spec_genus
+  and 
+  s.spec_name = a.spec_name
+order by 
+  s.spec_popular_name;
+
+ Animal ID  Mother ID  Father ID Popular Name                           
+---------- ---------- ---------- ----------------------------------------
+        12         11         10 Black Rhinoceros                        
+         4         11         10 Black Rhinoceros                        
+        15         14         13 Cheetah                                 
+        20         27         26 Common Hippopotamus                     
+         7         27         26 Common Hippopotamus                     
+        30         29         25 Grevy's Zebra                           
+        18         17         16 Lion                                    
+        19         17         16 Lion                                    
+         9         17         16 Lion                                    
+         3          2          1 Quokka                                  
+
+ 10 rows selected 
+
+SQL> /* Q8 List the centre name and the number of times the centre has been involved
+in an exchange for breeding program in the last two years.
+The centre involvement in the exchange can be as a recipient or a provider of
+the animal exchange.
+The 2 years should be counted from the current date when the query is executed.
+The list should be ordered from the highest to the lowest number of exchanges. */
+SQL> Select 
+  c.centre_name, 
+  count(e.exchange_from_centre_id) as "Number of exchanges (To/From)"
+from 
+  as2.centre c, 
+  as2.exchange e,
+  as2.exchange_type e1
+where 
+  (c.centre_id = e.exchange_from_centre_id or c.centre_id = e.exchange_to_centre_id)
+  and 
+  round(sysdate-exchange_date,0) < 730
+  and 
+  upper(e1.et_description) = 'BREEDING'
+group by 
+  centre_name
+order by
+  count(e.exchange_from_centre_id) desc;
+
+CENTRE_NAME                                        Number of exchanges (To/From)
+---------------------------------------- ---------------------------------------
+SanWild Wildlife Sanctuary                                                     3
+Johannesburg Zoo                                                               2
+Werribee Open Range Zoo                                                        1
+
+SQL> set echo off
+SQL> spool off
